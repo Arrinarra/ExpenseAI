@@ -1,5 +1,3 @@
-# backend/app/api/endpoints/users.py
-@"
 from typing import Annotated
 from fastapi import APIRouter, Depends
 
@@ -14,4 +12,3 @@ def read_current_user(
     current_user: Annotated[User, Depends(get_current_user)]
 ):
     return current_user
-"@ | Set-Content -Path backend\app\api\endpoints\users.py -Encoding UTF8

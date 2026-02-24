@@ -1,5 +1,3 @@
-# backend/app/core/config.py
-@"
 from pydantic_settings import BaseSettings
 from pydantic import ConfigDict
 
@@ -17,4 +15,3 @@ class Settings(BaseSettings):
     model_config = ConfigDict(case_sensitive=True)
 
 settings = Settings()
-"@ | Set-Content -Path backend\app\core\config.py -Encoding UTF8

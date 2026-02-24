@@ -1,5 +1,3 @@
-# backend/app/api/endpoints/categories.py
-@"
 from typing import Annotated, List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -73,4 +71,3 @@ def delete_category(
     
     category = category_crud.remove(db, category_id=category_id)
     return category
-"@ | Set-Content -Path backend\app\api\endpoints\categories.py -Encoding UTF8

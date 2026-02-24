@@ -1,5 +1,3 @@
-# backend/app/api/deps.py
-@"
 from typing import Annotated
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -35,4 +33,3 @@ async def get_current_user(
         raise credentials_exception
     
     return user
-"@ | Set-Content -Path backend\app\api\deps.py -Encoding UTF8
