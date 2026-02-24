@@ -1,5 +1,3 @@
-# backend/app/schemas/user.py
-@"
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
 from datetime import datetime
@@ -32,4 +30,3 @@ class Token(BaseModel):
 class TokenPayload(BaseModel):
     sub: Optional[int] = None
     exp: Optional[datetime] = None
-"@ | Set-Content -Path backend\app\schemas\user.py -Encoding UTF8

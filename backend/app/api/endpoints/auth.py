@@ -1,5 +1,3 @@
-# backend/app/api/endpoints/auth.py
-@"
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
@@ -72,4 +70,3 @@ def login_json(
     )
     
     return Token(access_token=access_token)
-"@ | Set-Content -Path backend\app\api\endpoints\auth.py -Encoding UTF8

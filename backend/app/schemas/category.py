@@ -1,5 +1,3 @@
-# backend/app/schemas/category.py
-@"
 from pydantic import BaseModel
 from typing import Optional
 from app.models.category import TransactionType
@@ -22,4 +20,3 @@ class Category(CategoryBase):
     
     class Config:
         from_attributes = True
-"@ | Set-Content -Path backend\app\schemas\category.py -Encoding UTF8

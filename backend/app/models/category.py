@@ -1,5 +1,3 @@
-# backend/app/models/category.py
-@"
 from sqlalchemy import Column, Integer, String, Enum
 from app.database import Base
 import enum
@@ -15,4 +13,3 @@ class Category(Base):
     name = Column(String, unique=True, index=True, nullable=False)
     type = Column(Enum(TransactionType), nullable=False)
     description = Column(String)
-"@ | Set-Content -Path backend\app\models\category.py -Encoding UTF8

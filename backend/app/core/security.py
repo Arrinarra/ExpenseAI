@@ -1,5 +1,3 @@
-# backend/app/core/security.py
-@"
 from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
@@ -31,4 +29,3 @@ def decode_token(token: str) -> Optional[dict]:
         return payload
     except JWTError:
         return None
-"@ | Set-Content -Path backend\app\core\security.py -Encoding UTF8
