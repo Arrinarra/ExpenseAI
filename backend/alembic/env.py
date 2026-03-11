@@ -4,6 +4,7 @@ from sqlalchemy import pool
 from alembic import context
 import sys
 from pathlib import Path
+from app.models import transaction  # или from app.models import Transaction
 
 sys.path.append(str(Path(__file__).parent.parent))
 
