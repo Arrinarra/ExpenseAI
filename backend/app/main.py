@@ -1,14 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
-import os
+from pathlib import Path
+
 from app.api.router import api_router
 from app.core.config import settings
 from app.database import engine, Base
-from app.models import user, category
+from app.models import user, category  # noqa
 
-# Create database tables
+# Создание таблиц (если не используете миграции)
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
@@ -17,21 +17,23 @@ app = FastAPI(
     openapi_url=f"{settings.API_V1_STR}/openapi.json"
 )
 
-# Set up CORS
+# CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:5500", "http://127.0.0.1:5500"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Mount static files (frontend)
-frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../frontend"))
-if os.path.exists(frontend_path):
-    app.mount("/frontend", StaticFiles(directory=frontend_path), name="frontend")
+# Подключаем единый роутер со всеми эндпоинтами
+app.include_router(api_router, prefix=settings.API_V1_STR)
 
-# Serve index.html at root
+# Статика (если нужна)
+frontend_path = Path(__file__).parent.parent.parent / "frontend"
+if frontend_path.exists():
+    app.mount("/frontend", StaticFiles(directory=str(frontend_path)), name="frontend")
+
 @app.get("/")
 def root():
     return {
@@ -40,6 +42,3 @@ def root():
         "docs": "/docs",
         "frontend": "/frontend/index.html"
     }
-
-# Include routers
-app.include_router(api_router, prefix=settings.API_V1_STR)
