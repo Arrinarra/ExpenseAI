@@ -3,6 +3,9 @@ from typing import Optional, List
 from datetime import date
 from app.models.transaction import Transaction
 from app.schemas.transaction import TransactionCreate, TransactionUpdate
+from app.crud.exchange_rate import get_latest_rate
+from app.core.config import settings
+from fastapi import HTTPException
 
 def get_transaction(db: Session, transaction_id: int, user_id: int) -> Optional[Transaction]:
     return db.query(Transaction).filter(
@@ -29,7 +32,22 @@ def get_transactions(
     return query.order_by(Transaction.date.desc()).offset(skip).limit(limit).all()
 
 def create_transaction(db: Session, transaction: TransactionCreate, user_id: int) -> Transaction:
-    db_transaction = Transaction(**transaction.dict(), user_id=user_id)
+    # Получаем курс из валюты транзакции в базовую валюту (USD)
+    rate = get_latest_rate(db, transaction.currency, settings.BASE_CURRENCY)
+    if rate is None:
+        # Если курс не найден, можно либо бросить ошибку, либо установить base_amount = None
+        raise HTTPException(status_code=400, detail=f"Exchange rate for {transaction.currency} to {settings.BASE_CURRENCY} not found")
+    base_amount = transaction.amount * rate  # переводим в базовую валюту
+
+    db_transaction = Transaction(
+        user_id=user_id,
+        amount=transaction.amount,
+        currency=transaction.currency,
+        base_amount=base_amount,
+        category_id=transaction.category_id,
+        date=transaction.date,
+        description=transaction.description
+    )
     db.add(db_transaction)
     db.commit()
     db.refresh(db_transaction)
