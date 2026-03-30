@@ -11,7 +11,7 @@ from app.crud import transaction as crud
 
 router = APIRouter()
 
-@router.post("/transactions", response_model=TransactionOut)
+@router.post("/", response_model=TransactionOut)
 def create_transaction(
     transaction: TransactionCreate,
     db: Session = Depends(get_db),
@@ -19,7 +19,7 @@ def create_transaction(
 ):
     return crud.create_transaction(db=db, transaction=transaction, user_id=current_user.id)
 
-@router.get("/transactions", response_model=List[TransactionOut])
+@router.get("/", response_model=List[TransactionOut])
 def read_transactions(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
@@ -39,7 +39,7 @@ def read_transactions(
     )
     return transactions
 
-@router.get("/transactions/{transaction_id}", response_model=TransactionOut)
+@router.get("/{transaction_id}", response_model=TransactionOut)
 def read_transaction(
     transaction_id: int,
     db: Session = Depends(get_db),
@@ -50,7 +50,7 @@ def read_transaction(
         raise HTTPException(status_code=404, detail="Transaction not found")
     return db_transaction
 
-@router.put("/transactions/{transaction_id}", response_model=TransactionOut)
+@router.put("/{transaction_id}", response_model=TransactionOut)
 def update_transaction(
     transaction_id: int,
     transaction_update: TransactionUpdate,
@@ -62,7 +62,7 @@ def update_transaction(
         raise HTTPException(status_code=404, detail="Transaction not found")
     return crud.update_transaction(db, db_transaction, transaction_update)
 
-@router.delete("/transactions/{transaction_id}", status_code=204)
+@router.delete("/{transaction_id}", status_code=204)
 def delete_transaction(
     transaction_id: int,
     db: Session = Depends(get_db),
