@@ -10,6 +10,7 @@ class Transaction(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     amount = Column(Float, nullable=False)
     currency = Column(String(3), nullable=False, default="USD")
+    base_amount = Column(Float, nullable=True)
     category_id = Column(Integer, ForeignKey("categories.id"), nullable=False)
     date = Column(Date, nullable=False, default=date.today)
     description = Column(Text, nullable=True)
