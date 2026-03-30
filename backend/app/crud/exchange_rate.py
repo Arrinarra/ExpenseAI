@@ -26,12 +26,25 @@ def save_rates(db: Session, rates: dict, base_currency: str = "USD"):
             ))
     db.commit()
 
-def get_latest_rate(db: Session, from_currency: str, to_currency: str) -> float:
+def get_latest_rate(db: Session, from_currency: str, to_currency: str) -> float | None:
     """
     Возвращает последний известный курс из БД.
+    Если прямой курс не найден, пробует обратный и возвращает 1/rate.
     """
+    # Прямой курс
     rate_obj = db.query(ExchangeRate).filter(
         ExchangeRate.from_currency == from_currency,
         ExchangeRate.to_currency == to_currency
     ).order_by(ExchangeRate.date.desc()).first()
-    return rate_obj.rate if rate_obj else None
+    if rate_obj:
+        return rate_obj.rate
+    
+    # Обратный курс
+    rate_obj = db.query(ExchangeRate).filter(
+        ExchangeRate.from_currency == to_currency,
+        ExchangeRate.to_currency == from_currency
+    ).order_by(ExchangeRate.date.desc()).first()
+    if rate_obj:
+        return 1 / rate_obj.rate
+    
+    return None

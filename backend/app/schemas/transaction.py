@@ -1,7 +1,6 @@
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator
 from datetime import date
 from typing import Optional
-from pydantic import BaseModel, field_validator
 
 class TransactionBase(BaseModel):
     amount: float
@@ -35,6 +34,7 @@ class TransactionUpdate(BaseModel):
 class TransactionOut(TransactionBase):
     id: int
     user_id: int
+    base_amount: Optional[float] = None   # <-- добавлено
 
     class Config:
-        orm_mode = True
+        from_attributes = True   # <-- заменено (вместо orm_mode)
