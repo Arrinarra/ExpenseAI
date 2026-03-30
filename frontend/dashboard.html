@@ -232,7 +232,7 @@
         // Загрузка сводки
         async function loadSummary() {
             try {
-                const response = await fetchWithAuth(`${API_BASE}/summary?period=month`);
+                const response = await fetchWithAuth(`${API_BASE}/summary/summary?period=month`);
                 if (response.ok) {
                     const data = await response.json();
                     document.getElementById('totalIncome').textContent = data.total_income.toFixed(2);

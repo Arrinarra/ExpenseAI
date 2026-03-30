@@ -23,7 +23,7 @@ def test_create_transaction(client: TestClient, db_session):
     token = create_access_token(data={"sub": str(user.id)})
 
     response = client.post(
-        "/api/transactions",
+        "/api/v1/transactions/",  # исправленный путь
         json={
             "amount": -15.50,
             "currency": "USD",
@@ -54,7 +54,7 @@ def test_get_transactions(client: TestClient, db_session):
 
     # Создаём транзакцию через API
     client.post(
-        "/api/transactions",
+        "/api/v1/transactions/",  # исправленный путь
         json={
             "amount": -15.50,
             "currency": "USD",
@@ -64,7 +64,7 @@ def test_get_transactions(client: TestClient, db_session):
         headers={"Authorization": f"Bearer {token}"}
     )
 
-    response = client.get("/api/transactions", headers={"Authorization": f"Bearer {token}"})
+    response = client.get("/api/v1/transactions/", headers={"Authorization": f"Bearer {token}"})  # исправленный путь
     assert response.status_code == 200
     data = response.json()
     assert len(data) >= 1
@@ -85,18 +85,18 @@ def test_get_summary(client: TestClient, db_session):
 
     # Добавляем доход
     client.post(
-        "/api/transactions",
+        "/api/v1/transactions/",  # исправленный путь
         json={"amount": 1000, "currency": "USD", "category_id": category.id, "date": str(date.today())},
         headers={"Authorization": f"Bearer {token}"}
     )
     # Добавляем расход
     client.post(
-        "/api/transactions",
+        "/api/v1/transactions",  # исправленный путь
         json={"amount": -200, "currency": "USD", "category_id": category.id, "date": str(date.today())},
         headers={"Authorization": f"Bearer {token}"}
     )
 
-    response = client.get("/api/summary?period=month", headers={"Authorization": f"Bearer {token}"})
+    response = client.get("/api/v1/summary/summary?period=month", headers={"Authorization": f"Bearer {token}"})  # исправленный путь
     assert response.status_code == 200
     data = response.json()
     assert data["total_income"] == 1000

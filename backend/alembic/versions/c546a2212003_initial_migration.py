@@ -1,8 +1,8 @@
-"""add transaction model
+"""initial migration
 
-Revision ID: 456db55e7c55
-Revises: 340c309446df
-Create Date: 2026-03-11 04:00:24.388443
+Revision ID: c546a2212003
+Revises:
+Create Date: 2026-03-30 09:20:21.571768
 
 """
 
@@ -12,8 +12,8 @@ from alembic import op
 import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
-revision: str = "456db55e7c55"
-down_revision: Union[str, Sequence[str], None] = "340c309446df"
+revision: str = "c546a2212003"
+down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
