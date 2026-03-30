@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "your-secret-key-change-in-production"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    EXCHANGE_API_URL: str = "https://api.exchangerate-api.com/v4/latest/USD"
+    BASE_CURRENCY: str = "USD"
     
     model_config = ConfigDict(case_sensitive=True)
 
