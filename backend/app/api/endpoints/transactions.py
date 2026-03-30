@@ -8,6 +8,8 @@ from app.api.deps import get_current_user
 from app.models.user import User
 from app.schemas.transaction import TransactionCreate, TransactionUpdate, TransactionOut
 from app.crud import transaction as crud
+from app.crud.exchange_rate import convert_from_base
+from app.core.config import settings
 
 router = APIRouter()
 
@@ -27,7 +29,8 @@ def read_transactions(
     date_from: Optional[date] = Query(None),
     date_to: Optional[date] = Query(None),
     skip: int = 0,
-    limit: int = 100
+    limit: int = 100,
+    base_currency: str = Query("USD", description="Валюта для отображения сумм")
 ):
     transactions = crud.get_transactions(
         db, user_id=current_user.id,
@@ -37,7 +40,22 @@ def read_transactions(
         skip=skip,
         limit=limit
     )
-    return transactions
+    result = []
+    for tx in transactions:
+        # Преобразуем SQLAlchemy объект в Pydantic схему
+        out = TransactionOut.model_validate(tx)
+        if base_currency != settings.BASE_CURRENCY:
+            try:
+                converted = convert_from_base(db, tx.base_amount, base_currency)
+                out.converted_amount = converted
+            except ValueError:
+                # Если курс не найден, оставляем сумму в USD
+                out.converted_amount = tx.base_amount
+        else:
+            # Если запрошена базовая валюта, показываем исходную сумму в валюте транзакции
+            out.converted_amount = tx.amount
+        result.append(out)
+    return result
 
 @router.get("/{transaction_id}", response_model=TransactionOut)
 def read_transaction(

@@ -35,6 +35,7 @@ class TransactionOut(TransactionBase):
     id: int
     user_id: int
     base_amount: Optional[float] = None   # <-- добавлено
+    converted_amount: Optional[float] = None
 
     class Config:
         from_attributes = True   # <-- заменено (вместо orm_mode)

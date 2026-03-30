@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from datetime import date
 from app.models.exchange_rate import ExchangeRate
+from app.core.config import settings
 
 def save_rates(db: Session, rates: dict, base_currency: str = "USD"):
     """
@@ -48,3 +49,15 @@ def get_latest_rate(db: Session, from_currency: str, to_currency: str) -> float 
         return 1 / rate_obj.rate
     
     return None
+
+def convert_from_base(db: Session, amount_usd: float, to_currency: str) -> float:
+    """
+    Конвертирует сумму из USD в целевую валюту.
+    Возвращает amount * rate (USD -> to_currency).
+    """
+    if to_currency == settings.BASE_CURRENCY:
+        return amount_usd
+    rate = get_latest_rate(db, settings.BASE_CURRENCY, to_currency)
+    if rate is None:
+        raise ValueError(f"Exchange rate from USD to {to_currency} not found")
+    return amount_usd * rate
