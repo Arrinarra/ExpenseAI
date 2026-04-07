@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.endpoints import auth, users, categories, summary, currencies
+from app.api.endpoints import auth, users, categories, summary, currencies, analytics, export
 from app.api.endpoints.transactions import router as transactions_router
 
 api_router = APIRouter()
@@ -9,3 +9,5 @@ api_router.include_router(categories.router, prefix="/categories", tags=["catego
 api_router.include_router(transactions_router, prefix="/transactions", tags=["transactions"])
 api_router.include_router(summary.router, prefix="/summary", tags=["summary"])
 api_router.include_router(currencies.router, prefix="/currencies", tags=["currencies"])
+api_router.include_router(analytics.router, prefix="/analytics", tags=["analytics"])
+api_router.include_router(export.router, prefix="/export", tags=["export"])
