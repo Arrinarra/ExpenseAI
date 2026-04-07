@@ -1,6 +1,9 @@
 from pydantic import BaseModel, field_validator
 from datetime import date
 from typing import Optional
+from pydantic import field_validator
+
+ALLOWED_CURRENCIES = ["USD", "EUR", "RUB", "GBP", "JPY"]
 
 class TransactionBase(BaseModel):
     amount: float
@@ -13,6 +16,12 @@ class TransactionBase(BaseModel):
     def amount_must_be_non_zero(cls, v):
         if v == 0:
             raise ValueError('amount cannot be zero')
+        return v
+    
+    @field_validator('currency')
+    def validate_currency(cls, v):
+        if v not in ALLOWED_CURRENCIES:
+            raise ValueError(f"Currency must be one of {ALLOWED_CURRENCIES}")
         return v
 
 class TransactionCreate(TransactionBase):
@@ -29,6 +38,12 @@ class TransactionUpdate(BaseModel):
     def amount_must_be_non_zero(cls, v):
         if v is not None and v == 0:
             raise ValueError('amount cannot be zero')
+        return v
+    
+    @field_validator('currency')
+    def validate_currency(cls, v):
+        if v not in ALLOWED_CURRENCIES:
+            raise ValueError(f"Currency must be one of {ALLOWED_CURRENCIES}")
         return v
 
 class TransactionOut(TransactionBase):

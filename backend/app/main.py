@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
+from app.scheduler import start_scheduler
 
 from app.api.router import api_router
 from app.core.config import settings
@@ -28,6 +29,10 @@ app.add_middleware(
 
 # Подключаем единый роутер со всеми эндпоинтами
 app.include_router(api_router, prefix=settings.API_V1_STR)
+
+@app.on_event("startup")
+def startup_event():
+    start_scheduler()
 
 # Статика (если нужна)
 frontend_path = Path(__file__).parent.parent.parent / "frontend"
