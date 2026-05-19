@@ -28,19 +28,22 @@ def get_summary(
     else:  # year
         start_date = today.replace(month=1, day=1)
 
-    # Доходы (amount > 0) в USD
+    # Доходы (amount > 0)
     total_income_usd = db.query(func.sum(Transaction.base_amount)).filter(
         Transaction.user_id == current_user.id,
         Transaction.date >= start_date,
         Transaction.amount > 0
     ).scalar() or 0.0
 
-    # Расходы (amount < 0) в USD
+    # Расходы (amount < 0) — теперь они будут отрицательными
     total_expense_usd = db.query(func.sum(Transaction.base_amount)).filter(
         Transaction.user_id == current_user.id,
         Transaction.date >= start_date,
         Transaction.amount < 0
     ).scalar() or 0.0
+
+    # Расходы должны быть положительным числом для отображения
+    total_expense_usd = abs(total_expense_usd)
 
     balance_usd = total_income_usd - total_expense_usd
 

@@ -3,6 +3,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from datetime import timedelta
+from app.schemas.user import UserCreate
+from app.schemas.token import Token
 
 from app.database import get_db
 from app.schemas.user import UserCreate, User, Token
@@ -70,3 +72,11 @@ def login_json(
     )
     
     return Token(access_token=access_token)
+
+#@router.post("/login-json")
+#def login_json(user_in: UserCreate, db: Session = Depends(get_db)):
+#    user = user_crud.authenticate(db, email=user_in.email, password=user_in.password)
+#    if not user:
+#        raise HTTPException(status_code=401, detail="Incorrect email or password")
+#    token = create_access_token(data={"sub": str(user.id)})
+#    return Token(access_token=token)
