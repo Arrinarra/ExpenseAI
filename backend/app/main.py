@@ -44,7 +44,7 @@ def startup_event():
     start_scheduler()
 
 # Монтируем папку со статикой (CSS, JS)
-frontend_path = Path(__file__).parent.parent / "frontend"
+frontend_index = Path(__file__).parent.parent / "frontend" / "index.html"
 if frontend_path.exists():
     app.mount("/static", StaticFiles(directory=str(frontend_path)), name="static")
     print(f"✅ Static files mounted from {frontend_path}")
