@@ -70,6 +70,14 @@ async def serve_dashboard():
             return f.read()
     return HTMLResponse(content="<h1>Dashboard not found</h1>", status_code=404)
 
+@app.get("/dashboard.html", response_class=HTMLResponse)
+async def serve_dashboard_html():
+    dashboard_path = frontend_path / "dashboard.html"
+    if dashboard_path.exists():
+        with open(dashboard_path, "r", encoding="utf-8") as f:
+            return f.read()
+    return HTMLResponse(content="<h1>Dashboard not found</h1>", status_code=404)
+
 # API root endpoint (JSON)
 @app.get("/api-root")
 def api_root():
