@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
@@ -19,7 +20,7 @@ app = FastAPI(
     openapi_url=f"{settings.API_V1_STR}/openapi.json"
 )
 
-# CORS (добавлен localtunnel адрес для теста)
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -27,8 +28,8 @@ app.add_middleware(
         "http://127.0.0.1:5500", 
         "http://localhost",
         "http://127.0.0.1",
-        "https://*.loca.lt",  # разрешаем localtunnel
-        "*"  # временно для теста, потом можно убрать
+        "https://*.onrender.com",  # разрешаем Render
+        "*"  # временно для теста
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -42,19 +43,30 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 def startup_event():
     start_scheduler()
 
-# Статика
+# Монтируем папку со статикой (CSS, JS)
 frontend_path = Path(__file__).parent / "frontend"
 if frontend_path.exists():
-    app.mount("/frontend", StaticFiles(directory=str(frontend_path)), name="frontend")
-    print(f"✅ Frontend mounted from {frontend_path}")
+    app.mount("/static", StaticFiles(directory=str(frontend_path)), name="static")
+    print(f"✅ Static files mounted from {frontend_path}")
 else:
     print(f"❌ Frontend not found at {frontend_path}")
 
+# Корневой эндпоинт - отдаём главную страницу
 @app.get("/")
-def root():
-    return {
-        "message": "Welcome to ExpenseAI API",
-        "version": settings.VERSION,
-        "docs": "/docs",
-        "frontend": "/frontend/index.html"
-    }
+async def serve_index():
+    index_path = Path(__file__).parent / "frontend" / "index.html"
+    if index_path.exists():
+        with open(index_path, "r", encoding="utf-8") as f:
+            html_content = f.read()
+        return HTMLResponse(content=html_content)
+    return HTMLResponse(content="<h1>Frontend not found</h1>", status_code=404)
+
+# Эндпоинт для дашборда (если нужно прямое открытие)
+@app.get("/dashboard")
+async def serve_dashboard():
+    dashboard_path = Path(__file__).parent / "frontend" / "dashboard.html"
+    if dashboard_path.exists():
+        with open(dashboard_path, "r", encoding="utf-8") as f:
+            html_content = f.read()
+        return HTMLResponse(content=html_content)
+    return HTMLResponse(content="<h1>Dashboard not found</h1>", status_code=404)
